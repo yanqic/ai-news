@@ -4,7 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="0;url=archive.html">
-    <title>AI新闻简报</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。">
+    <meta name="keywords" content="AI新闻,人工智能,机器学习,AI简报">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ai-news.vercel.app/">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AI新闻简报 - 每日AI行业资讯">
+    <meta property="og:description" content="每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。">
+    <meta property="og:url" content="https://ai-news.vercel.app/">
+    <meta property="og:site_name" content="AI新闻简报">
+    <meta property="og:locale" content="zh_CN">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="AI新闻简报 - 每日AI行业资讯">
+    <meta name="twitter:description" content="每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    
+    <style>
+        :root {
+            --bg-primary: #fafafa;
+            --text-primary: #1a1a1a;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #0d1117;
+            --text-primary: #c9d1d9;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            text-align: center;
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        p { font-size: 18px; line-height: 1.6; }
+        
+        a { color: #0070f3; text-decoration: none; }
+        
+        a:hover { text-decoration: underline; }
+        
+        @media (max-width: 600px) {
+            body { padding: 30px 15px; }
+            p { font-size: 16px; }
+        }
+    </style>
+    
+    <script>
+    // Apply saved theme to prevent flash
+    (function() {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    })();
+    </script>
 </head>
 <body>
     <p>正在跳转到 <a href="archive.html">历史存档</a>...</p>
