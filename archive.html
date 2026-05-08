@@ -9,13 +9,15 @@
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; background: #fafafa; }
         h1 { border-bottom: 2px solid #333; padding-bottom: 10px; color: #1a1a1a; }
         .nav { margin-bottom: 20px; }
-        .nav a { margin-right: 15px; color: #0070f3; text-decoration: none; }
+        .nav a { margin-right: 15px; color: #0070f3; text-decoration: none; font-size: 16px; }
         .nav a:hover { text-decoration: underline; }
-        .archive-list { background: #fff; padding: 20px; border-radius: 8px; }
-        .archive-item { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .archive-list { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .archive-item { padding: 12px 0; border-bottom: 1px solid #eee; }
         .archive-item:last-child { border-bottom: none; }
-        .archive-item a { color: #0366d6; text-decoration: none; }
+        .archive-item a { color: #0366d6; text-decoration: none; font-weight: 500; }
         .archive-item a:hover { text-decoration: underline; }
+        .empty { color: #666; font-style: italic; }
+        .footer { margin-top: 40px; padding: 20px; background: #fff; border-radius: 8px; color: #666; font-size: 0.85em; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
@@ -25,8 +27,45 @@
     </div>
     
     <h1>📁 历史存档</h1>
-    <div class="archive-list">
-        <p>暂无历史存档...</p>
+    <div class="archive-list" id="post-list">
+        <p class="empty">暂无历史存档...</p>
     </div>
+    
+    <div class="footer">
+        <p>AI新闻来源：AIBase、机器之心、新智元、Google AI Blog</p>
+        <p>GitHub数据来源：github.com/trending</p>
+    </div>
+
+    <script>
+    // 自动列出 posts/ 目录下的所有文章
+    async function loadArchive() {
+        const list = document.getElementById('post-list');
+        try {
+            const response = await fetch('posts/');
+            const text = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const links = doc.querySelectorAll('a');
+            const posts = [];
+            links.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href.match(/^\d{4}-\d{2}-\d{2}\.html$/)) {
+                    const date = href.replace('.html', '');
+                    const label = date;
+                    posts.push({ date, label, href: 'posts/' + href });
+                }
+            });
+            posts.sort((a, b) => b.date.localeCompare(a.date));
+            if (posts.length > 0) {
+                list.innerHTML = posts.map(p => 
+                    `<div class="archive-item"><a href="${p.href}">📰 ${p.label}</a></div>`
+                ).join('');
+            }
+        } catch (e) {
+            list.innerHTML = '<p class="empty">无法加载存档列表</p>';
+        }
+    }
+    loadArchive();
+    </script>
 </body>
 </html>
