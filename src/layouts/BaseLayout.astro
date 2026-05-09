@@ -1,0 +1,21 @@
+---
+// src/layouts/BaseLayout.astro
+import Head from '@/components/Head.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '@/data/site-config';
+---
+<html lang="en">
+  <head>
+    <Head />
+    <title>{SITE_TITLE}</title>
+    <meta name="description" content={SITE_DESCRIPTION} />
+  </head>
+  <body class="min-h-[100vh] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <Header />
+    <main class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

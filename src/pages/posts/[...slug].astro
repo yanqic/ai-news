@@ -1,0 +1,66 @@
+---
+// src/pages/posts/[...slug].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { SITE_TITLE } from '@/data/site-config';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map(post => ({
+    params: { slug: post.slug.split('/') },
+    props: { post }
+  }));
+}
+
+interface Props {
+  post: import('astro:content').CollectionEntry<'posts'>;
+}
+
+export async function ({ post }: Props) {
+  return (
+    <BaseLayout>
+      <article class="prose prose-lg mx-auto">
+        <h1 class="mb-6">{post.data.title}</h1>
+        {post.data.image && (
+          <figure class="mb-6">
+            <img 
+              src={post.data.image.url} 
+              alt={post.data.image.alt} 
+              class="rounded-lg shadow-md"
+            />
+            <figcaption class="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">
+              {post.data.image.alt}
+            </figcaption>
+          </figure>
+        )}
+        <div class="text-gray-800 dark:text-gray-200">
+          {!post.data.draft && (
+            <div class="flex flex-wrap items-center gap-4 mb-6 text-sm text-gray-500 dark:text-gray-400">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time>
+              {post.data.author && (
+                <span> • <span>{post.data.author}</span></span>
+              )}
+              {post.data.tags.length > 0 && (
+                <>
+                  <span> • </span>
+                  <div class="flex flex-wrap gap-2">
+                    {post.data.tags.map((tag) => (
+                      <span key={tag} class="bg-primary-100 text-primary-800 dark:bg-primary-200 dark:text-primary-800 px-3 py-1 rounded-full text-xs font-medium">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+          <div set:html={post.body} />
+        </div>
+      </article>
+    </BaseLayout>
+  );
+}

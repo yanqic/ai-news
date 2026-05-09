@@ -1,0 +1,45 @@
+---
+// src/components/Header.astro
+import { SITE_NAVIGATION, SITE_SOCIAL, HERO_SECTION, SITE_AVATAR, SITE_TITLE, SITE_SUBTITLE } from '@/data/site-config';
+---
+<header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center space-x-3 mb-4 sm:mb-0">
+        <img 
+          src={SITE_AVATAR} 
+          alt={`${SITE_TITLE} avatar`} 
+          class="h-10 w-10 rounded-full"
+          onerror="this.onerror=null;this.src='/assets/avatar-fallback.png'"
+        />
+        <div>
+          <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+            <a href="/" class="hover:underline">{SITE_TITLE}</a>
+          </h1>
+          <p class="text-sm text-gray-500 dark:text-gray-400">{SITE_SUBTITLE}</p>
+        </div>
+      </div>
+      
+      <nav class="hidden sm:flex space-x-6">
+        {SITE_NAVIGATION.map((nav) => (
+          <a 
+            href={nav.url} 
+            class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors font-medium"
+            aria-current={Astro.url.pathname === nav.url ? 'page' : undefined}
+          >
+            {nav.name}
+          </a>
+        ))}
+      </nav>
+      
+      <div class="flex sm:hidden">
+        <!-- Mobile menu button would go here -->
+        <button class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

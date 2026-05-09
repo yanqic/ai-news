@@ -1,0 +1,23 @@
+---
+// src/components/Head.astro
+import { SITE_TITLE, SITE_DESCRIPTION } from '@/data/site-config';
+---
+<title>{SITE_TITLE}</title>
+<meta name="description" content={SITE_DESCRIPTION} />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="/favicon.svg" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Open Graph / Social -->
+<meta property="og:title" content={SITE_TITLE} />
+<meta property="og:description" content={SITE_DESCRIPTION} />
+<meta property="og:image" content="/assets/og-image.jpg" />
+<meta property="og:url" content="https://your-site.com" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={SITE_TITLE} />
+<meta name="twitter:description" content={SITE_DESCRIPTION} />
+<meta name="twitter:image" content="/assets/og-image.jpg" />

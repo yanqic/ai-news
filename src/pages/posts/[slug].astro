@@ -1,0 +1,36 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<Layout title={`${post.data.title} - AI新闻简报`} description={post.data.description}>
+  <div class="nav">
+    <a href="/">首页</a>
+    <a href="/archive">历史存档</a>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">🌙 暗色模式</button>
+  </div>
+
+  <h1>🤖 {post.data.title}</h1>
+
+  <Content />
+
+  <div class="footer">
+    <p>注：以上内容为AI自动聚合摘要。AI新闻来源：<a href="https://www.aibase.com/" target="_blank" rel="noopener">AIBase</a>、<a href="https://jiqizhixin.com/" target="_blank" rel="noopener">机器之心</a>、<a href="https://ai.ua.edu.cn/" target="_blank" rel="noopener">新智元</a>、<a href="https://blog.google/technology/ai/" target="_blank" rel="noopener">Google AI Blog</a>。GitHub数据来源：<a href="https://github.com/trending" target="_blank" rel="noopener">github.com/trending</a>。</p>
+    <p>生成时间：{post.data.generatedAt || post.data.date}</p>
+  </div>
+
+  <div class="back-link">
+    <a href="/archive">← 返回历史存档</a>
+  </div>
+</Layout>
