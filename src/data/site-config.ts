@@ -1,60 +1,41 @@
 // src/data/site-config.ts
-export const SITE_TITLE = 'Dante Astro Theme';
-export const SITE_DESCRIPTION = 'A minimal, slick, responsive and content-focused Astro.js theme for blog and portfolio';
-export const SITE_AUTHOR = 'Just Good UI';
+export const SITE_TITLE = 'AI新闻简报';
+export const SITE_DESCRIPTION = '每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。';
+export const SITE_AUTHOR = 'AI新闻自动聚合';
 
 export const SITE_AVATAR = '/assets/avatar.jpg';
-export const SITE_SUBTITLE = 'Single Author Blog & Portfolio';
+export const SITE_SUBTITLE = '每日AI行业资讯';
 
 export const SITE_NAVIGATION = [
   {
-    name: 'Blog',
-    url: '/posts'
+    name: '首页',
+    url: '/'
   },
   {
-    name: 'Projects',
-    url: '/projects'
+    name: '历史存档',
+    url: '/archive'
   }
 ];
 
 export const SITE_SOCIAL = {
-  twitter: 'https://twitter.com/your-twitter',
-  github: 'https://github.com/your-github',
-  linkedin: 'https://linkedin.com/in/your-linkedin',
-  instagram: 'https://instagram.com/your-instagram'
+  github: 'https://github.com/yanqic/ai-news'
 };
 
 export const HERO_SECTION = {
-  title: 'Dante Astro Theme',
-  text: 'A minimal, slick, responsive and content-focused Astro.js theme for blog and portfolio',
+  title: 'AI新闻简报',
+  text: '每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯，以及GitHub Trending项目推荐。',
   image: '/assets/hero.jpg',
   buttons: [
     {
-      text: 'Get Started',
-      url: '/posts',
+      text: '查看历史存档',
+      url: '/archive',
       variant: 'primary'
-    },
-    {
-      text: 'View Projects',
-      url: '/projects',
-      variant: 'secondary'
     }
   ]
 };
 
-export const NEWSLETTER = {
-  title: 'Subscribe to our newsletter',
-  text: 'Get the latest posts delivered right to your inbox',
-  provider: 'formspree', // Can be mailchimp, convertkit, etc.
-  action: 'https://formspree.io/f/your-form-id',
-  emailFieldName: 'email',
-  hiddenFields: [],
-  honeypot: true
-};
-
 export const PAGINATION = {
-  postsPerPage: 6,
-  projectsPerPage: 6
+  postsPerPage: 10
 };
 
-export const COPYRIGHT = '© 2025 Dante Astro Theme. All rights reserved.';
+export const COPYRIGHT = '© 2026 AI新闻简报 · AI自动聚合摘要';
