@@ -1,4 +1,5 @@
 // src/data/site-config.ts
+// AI News Blog - Site Configuration
 export const SITE_TITLE = 'AI新闻简报';
 export const SITE_DESCRIPTION = '每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。';
 export const SITE_AUTHOR = 'AI新闻自动聚合';
