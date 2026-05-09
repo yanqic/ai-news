@@ -3,63 +3,87 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
 const posts = await getCollection('posts');
-const sortedPosts = posts.sort((a, b) => b.data.pubDate.toISOString().localeCompare(a.data.pubDate.toISOString()));
+const sortedPosts = posts
+  .filter(p => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 ---
 
 <Layout title="AI新闻简报 - 每日AI行业资讯" description="每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。">
   <div class="nav">
     <a href="/">首页</a>
     <a href="/archive">历史存档</a>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">🌙 暗色模式</button>
   </div>
 
-  <h1>📁 历史存档</h1>
-  <div class="archive-list">
-    {sortedPosts.length === 0 ? (
-      <p class="empty">暂无历史存档...</p>
-    ) : (
-      sortedPosts.map(post => (
-        <div class="archive-item">
-          <a href={`/posts/${post.slug}`}>📰 {post.data.pubDate.toISOString().slice(0, 10)}</a>
-        </div>
-      ))
-    )}
-  </div>
+  <h1>📰 AI新闻简报</h1>
+  
+  <p class="intro">每日AI行业资讯，汇集多渠道热榜新闻与GitHub Trending项目推荐。</p>
+
+  {sortedPosts.length === 0 ? (
+    <p class="empty">暂无内容...</p>
+  ) : (
+    <div class="post-list">
+      {sortedPosts.map((post, i) => (
+        <a href={`/posts/${post.slug}`} class="post-item" data-i={i}>
+          <div class="post-date">{post.data.pubDate.toISOString().slice(0, 10)}</div>
+          <div class="post-title">{post.data.title}</div>
+          <div class="post-arrow">→</div>
+        </a>
+      ))}
+    </div>
+  )}
 
   <div class="footer">
-    <p>AI新闻来源：<a href="https://www.aibase.com/" target="_blank" rel="noopener">AIBase</a>、<a href="https://jiqizhixin.com/" target="_blank" rel="noopener">机器之心</a>、<a href="https://ai.ua.edu.cn/" target="_blank" rel="noopener">新智元</a>、<a href="https://blog.google/technology/ai/" target="_blank" rel="noopener">Google AI Blog</a></p>
-    <p>GitHub数据来源：<a href="https://github.com/trending" target="_blank" rel="noopener">github.com/trending</a></p>
+    <p>📡 AI新闻来源：AIBase、机器之心、新智元、Google AI Blog</p>
+    <p>⭐ GitHub数据来源：github.com/trending</p>
   </div>
 </Layout>
 
 <style>
-.archive-list {
-  background: var(--bg-secondary);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px var(--shadow);
-}
-
-.archive-item {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.archive-item:last-child { border-bottom: none; }
-
-.archive-item a {
-  color: var(--accent-color);
-  text-decoration: none;
-  font-weight: 500;
-  display: block;
-  padding: 8px 0;
-}
-
-.archive-item a:hover {
-  text-decoration: underline;
-  transform: translateX(4px);
-  transition: transform 0.2s;
-}
-
-.empty { color: var(--text-secondary); font-style: italic; }
+  .intro {
+    color: var(--text-secondary);
+    margin: 10px 0 20px;
+    font-size: 0.95em;
+  }
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .post-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .post-item:hover {
+    border-color: var(--accent-color);
+    transform: translateX(4px);
+  }
+  .post-date {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    min-width: 90px;
+  }
+  .post-title {
+    flex: 1;
+    font-weight: 500;
+  }
+  .post-arrow {
+    color: var(--accent-color);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .post-item:hover .post-arrow {
+    opacity: 1;
+  }
+  .empty {
+    color: var(--text-secondary);
+    font-style: italic;
+    padding: 20px 0;
+  }
 </style>

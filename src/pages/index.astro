@@ -1,31 +1,257 @@
 ---
-// src/pages/index.astro
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { HERO_SECTION } from '@/data/site-config';
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('posts');
+const sortedPosts = posts
+  .filter(p => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const latestPost = sortedPosts[0];
+const { Content: LatestContent } = latestPost ? (await latestPost.render()) : { Content: null };
 ---
-<BaseLayout>
-  <section class="text-center py-12">
-    <div class="text-6xl mb-8">🤖</div>
-    <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-      {HERO_SECTION.title}
-    </h1>
-    <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-      {HERO_SECTION.text}
-    </p>
-    <div class="flex flex-col sm:flex-row sm:justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-      {HERO_SECTION.buttons.map((button, index) => (
-        <a
-          key={index}
-          href={button.url}
-          class={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-            button.variant === 'primary'
-              ? 'bg-primary-600 text-white hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400'
-              : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
-          }`}
-        >
-          {button.text}
-        </a>
-      ))}
+
+<Layout title="AI新闻简报 - 每日AI行业资讯" description="每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。">
+  <div class="nav">
+    <span class="logo">🤖 AI新闻简报</span>
+    <div class="nav-links">
+      <a href="/archive">📁 历史存档</a>
     </div>
-  </section>
-</BaseLayout>
+  </div>
+
+  <main>
+    <section class="hero">
+      <h1>每日AI新闻</h1>
+      <p>汇集 AIBase、机器之心、新智元、Google AI Blog 等来源的AI行业资讯，以及 GitHub Trending 项目推荐。</p>
+    </section>
+
+    {latestPost ? (
+      <section class="latest">
+        <div class="section-header">
+          <h2>📰 最新一期</h2>
+          <span class="date-badge">{latestPost.data.pubDate.toISOString().slice(0, 10)}</span>
+        </div>
+        <article class="post-card">
+          <h3>{latestPost.data.title}</h3>
+          <div class="post-content">
+            <LatestContent />
+          </div>
+          <a href={`/posts/${latestPost.slug}`} class="read-more">阅读全文 →</a>
+        </article>
+      </section>
+    ) : (
+      <p class="empty">暂无内容</p>
+    )}
+
+    {sortedPosts.length > 1 && (
+      <section class="older">
+        <h2>📂 历史文章</h2>
+        <div class="post-list">
+          {sortedPosts.slice(1).map(post => (
+            <a href={`/posts/${post.slug}`} class="post-item">
+              <span class="post-date">{post.data.pubDate.toISOString().slice(0, 10)}</span>
+              <span class="post-title">{post.data.title}</span>
+              <span class="arrow">→</span>
+            </a>
+          ))}
+        </div>
+        <a href="/archive" class="view-all">查看全部 {sortedPosts.length} 篇 →</a>
+      </section>
+    )}
+  </main>
+
+  <footer>
+    <p>📡 AI新闻来源：AIBase、机器之心、新智元、Google AI Blog</p>
+    <p>⭐ GitHub数据来源：github.com/trending</p>
+  </footer>
+</Layout>
+
+<style>
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .logo {
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+  .nav-links a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: 0.95em;
+  }
+  .nav-links a:hover {
+    text-decoration: underline;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    margin-bottom: 30px;
+  }
+  .hero h1 {
+    font-size: 2em;
+    margin-bottom: 10px;
+    border: none;
+    padding: 0;
+  }
+  .hero p {
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .latest {
+    margin-bottom: 40px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .section-header h2 {
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    font-size: 1.3em;
+  }
+  .date-badge {
+    background: var(--accent-color);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+  }
+
+  .post-card {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--border-color);
+  }
+  .post-card h3 {
+    margin: 0 0 16px;
+    font-size: 1.4em;
+    border: none;
+    padding: 0;
+    background: none;
+  }
+  .post-content {
+    font-size: 0.95em;
+    line-height: 1.8;
+    max-height: 400px;
+    overflow: hidden;
+    position: relative;
+  }
+  .post-content::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(transparent, var(--bg-secondary));
+  }
+  .read-more {
+    display: inline-block;
+    margin-top: 16px;
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .read-more:hover {
+    text-decoration: underline;
+  }
+
+  .older h2 {
+    font-size: 1.2em;
+    margin-bottom: 12px;
+    padding: 0;
+    background: none;
+    border: none;
+  }
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 16px;
+  }
+  .post-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.2s;
+  }
+  .post-item:hover {
+    border: 1px solid var(--accent-color);
+    transform: translateX(4px);
+  }
+  .post-date {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    min-width: 90px;
+  }
+  .post-title {
+    flex: 1;
+  }
+  .arrow {
+    color: var(--accent-color);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .post-item:hover .arrow {
+    opacity: 1;
+  }
+  .view-all {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: 0.95em;
+  }
+  .view-all:hover {
+    text-decoration: underline;
+  }
+
+  .empty {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 60px 20px;
+  }
+
+  footer {
+    margin-top: 60px;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.85em;
+  }
+  footer p {
+    margin: 4px 0;
+  }
+
+  @media (max-width: 600px) {
+    .hero {
+      padding: 30px 16px;
+    }
+    .hero h1 {
+      font-size: 1.6em;
+    }
+    .post-card {
+      padding: 16px;
+    }
+  }
+</style>
