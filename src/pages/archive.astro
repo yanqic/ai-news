@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
 const posts = await getCollection('posts');
-const sortedPosts = posts.sort((a, b) => b.data.date.localeCompare(a.data.date));
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.toISOString().localeCompare(a.data.pubDate.toISOString()));
 ---
 
 <Layout title="AI新闻简报 - 每日AI行业资讯" description="每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。">
@@ -20,7 +20,7 @@ const sortedPosts = posts.sort((a, b) => b.data.date.localeCompare(a.data.date))
     ) : (
       sortedPosts.map(post => (
         <div class="archive-item">
-          <a href={`/posts/${post.slug}`}>📰 {post.data.date}</a>
+          <a href={`/posts/${post.slug}`}>📰 {post.data.pubDate.toISOString().slice(0, 10)}</a>
         </div>
       ))
     )}
