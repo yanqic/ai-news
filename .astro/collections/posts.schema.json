@@ -46,6 +46,20 @@
           ],
           "additionalProperties": false
         },
+        "coverImage": {
+          "type": "string"
+        },
+        "coverAlt": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "news",
+            "github"
+          ],
+          "default": "news"
+        },
         "tags": {
           "type": "array",
           "items": {

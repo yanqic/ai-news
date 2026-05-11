@@ -41,9 +41,9 @@ const cat = post.data.category || 'news';
   </nav>
 
   <!-- Cover image -->
-  {post.data.coverImage && (
+  {post.data.image?.url && (
     <div class="article-cover">
-      <img src={post.data.coverImage} alt={post.data.coverAlt || post.data.title} />
+      <img src={post.data.image.url} alt={post.data.image.alt || post.data.title} />
     </div>
   )}
 
@@ -313,5 +313,21 @@ const cat = post.data.category || 'news';
     color: var(--text-muted);
     width: 100%;
     margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .article-cover { max-height: 220px; }
+    .article-cover img { max-height: 220px; }
+    .post-page { padding: 20px 16px 56px; }
+    .post-page-inner { padding: 0; }
+    .post-title { font-size: 1.6rem; }
+    .post-body { font-size: 0.9rem; }
+    .post-body :global(h2) { font-size: 1.2rem; }
+    .sources-box { padding: 20px 0 0; }
+  }
+
+  @media (max-width: 480px) {
+    .post-meta { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .post-back { font-size: 0.7rem; }
   }
 </style>

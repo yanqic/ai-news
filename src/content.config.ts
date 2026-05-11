@@ -11,6 +11,9 @@ const postsCollection = defineCollection({
       url: z.string(),
       alt: z.string()
     }).optional(),
+    coverImage: z.string().optional(),
+    coverAlt: z.string().optional(),
+    category: z.enum(['news', 'github']).default('news'),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false)
   })
