@@ -6,6 +6,15 @@ const posts = await getCollection('posts');
 const sortedPosts = posts
   .filter(p => !p.data.draft)
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const grouped = sortedPosts.reduce((acc, post) => {
+  const key = post.data.pubDate.toISOString().slice(0, 7);
+  if (!acc[key]) acc[key] = [];
+  acc[key].push(post);
+  return acc;
+}, {} as Record<string, typeof posts>);
+
+const months = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 ---
 
 <Layout title="历史存档 - AI新闻简报" description="AI新闻简报历史文章存档">
@@ -13,7 +22,13 @@ const sortedPosts = posts
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="/" class="nav-brand">
-        <div class="nav-brand-icon">🤖</div>
+        <div class="nav-brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="#001f1f" stroke-width="2"/>
+            <path d="M12 6v6l4 2" stroke="#001f1f" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="2" fill="#001f1f"/>
+          </svg>
+        </div>
         <span>AI新闻简报</span>
       </a>
       <div class="nav-links">
@@ -26,41 +41,48 @@ const sortedPosts = posts
     </div>
   </nav>
 
-  <main>
+  <!-- Dark Archive Hero -->
+  <section class="archive-hero">
     <div class="page-container">
-      <!-- Archive header -->
-      <section class="archive-header">
-        <h1>历史存档</h1>
-        <p>共 {sortedPosts.length} 期内容</p>
-      </section>
-
-      <!-- Archive list -->
-      <div class="posts-section">
-        {sortedPosts.length === 0 ? (
-          <div class="empty-state">暂无内容</div>
-        ) : (
-          <div class="posts-list">
-            {sortedPosts.map(post => {
-              const date = post.data.pubDate.toISOString().slice(0, 10);
-              return (
-                <a href={`/posts/${post.slug}`} class="post-list-item">
-                  <span class="post-list-item-date">{date}</span>
-                  <span class="post-list-item-title">{post.data.title}</span>
-                  <span class="post-list-item-arrow">→</span>
-                </a>
-              );
-            })}
-          </div>
-        )}
-      </div>
+      <p class="hero-eyebrow">全部文章</p>
+      <h1>历史存档</h1>
+      <p>共 {sortedPosts.length} 期内容</p>
     </div>
-  </main>
+  </section>
+
+  <!-- Archive List -->
+  <section class="archive-section">
+    <div class="page-container">
+      {sortedPosts.length === 0 ? (
+        <div class="empty-state">暂无内容</div>
+      ) : (
+        months.map(month => (
+          <div class="archive-group">
+            <div class="archive-month-label">{month}</div>
+            <div class="archive-list">
+              {grouped[month].map(post => (
+                <a href={`/posts/${post.slug}`} class="archive-item">
+                  <span class="archive-item-date">{post.data.pubDate.toISOString().slice(8, 10)}日</span>
+                  <span class="archive-item-title">{post.data.title}</span>
+                  <span class="archive-item-arrow">→</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </section>
 
   <footer class="site-footer">
     <div class="footer-inner">
       <div>
         <div class="footer-brand">
-          <span>🤖</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="#bfb29c" stroke-width="2"/>
+            <path d="M12 6v6l4 2" stroke="#bfb29c" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="2" fill="#bfb29c"/>
+          </svg>
           <span>AI新闻简报</span>
         </div>
         <p class="footer-note">由 AI 自动聚合 · 每日更新</p>

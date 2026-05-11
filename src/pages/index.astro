@@ -13,7 +13,13 @@ const sortedPosts = posts
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="/" class="nav-brand">
-        <div class="nav-brand-icon">🤖</div>
+        <div class="nav-brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="#001f1f" stroke-width="2"/>
+            <path d="M12 6v6l4 2" stroke="#001f1f" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="2" fill="#001f1f"/>
+          </svg>
+        </div>
         <span>AI新闻简报</span>
       </a>
       <div class="nav-links">
@@ -26,67 +32,80 @@ const sortedPosts = posts
     </div>
   </nav>
 
-  <main>
+  <!-- Dark Hero -->
+  <section class="hero-section">
     <div class="page-container">
-      <!-- Hero -->
-      <section class="blog-hero">
-        <div class="blog-hero-inner">
-          <h1>AI新闻简报</h1>
-          <p>每日追踪 AIBase、机器之心、新智元、Google AI Blog 等来源的AI行业动态，与 GitHub Trending 热门项目推荐。</p>
-        </div>
-      </section>
-
-      <!-- Category filters -->
-      <div class="category-filters">
-        <button class="category-pill active" data-category="all">全部</button>
-        <button class="category-pill" data-category="news">每日AI新闻</button>
-        <button class="category-pill" data-category="github">GitHub Trending</button>
-      </div>
-
-      <!-- Toolbar -->
-      <div class="section-toolbar">
-        <span class="section-count">{sortedPosts.length} 期内容</span>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <div class="view-toggle">
-            <button class="active" id="grid-view-btn" title="网格视图" aria-label="网格视图">⊞</button>
-            <button id="list-view-btn" title="列表视图" aria-label="列表视图">≡</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Posts grid -->
-      <div class="posts-section">
-        {sortedPosts.length === 0 ? (
-          <div class="empty-state">暂无内容</div>
-        ) : (
-          <div class="posts-grid" id="posts-grid">
-            {sortedPosts.map(post => {
-              const date = post.data.pubDate.toISOString().slice(0, 10);
-              return (
-                <a href={`/posts/${post.slug}`} class="post-card" data-date={date}>
-                  <div class="post-card-meta">
-                    <span class="post-card-date">{date}</span>
-                  </div>
-                  <div class="post-card-title">{post.data.title}</div>
-                  <div class="post-card-excerpt">{post.data.description || '每日AI新闻摘要及GitHub Trending热榜项目推荐。'}</div>
-                  <div class="post-card-footer">
-                    <span class="post-card-sources">AIBase · 机器之心 · 新智元</span>
-                    <span class="read-more-link">阅读 →</span>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-        )}
+      <div class="hero-inner">
+        <p class="hero-eyebrow">每日更新 · AI聚合</p>
+        <h1 class="hero-title">AI新闻简报</h1>
+        <div class="hero-divider"></div>
+        <p class="hero-subtitle">
+          追踪 AIBase、机器之心、新智元、Google AI Blog 等来源的AI行业动态，
+          与 GitHub Trending 热门项目推荐。
+        </p>
       </div>
     </div>
-  </main>
+  </section>
+
+  <!-- Filters & Toolbar (cream) -->
+  <section class="filters-bar">
+    <div class="page-container">
+      <div class="filters-inner">
+        <div class="filter-pills">
+          <button class="filter-pill active" data-filter="all">全部</button>
+          <button class="filter-pill" data-filter="news">每日AI新闻</button>
+          <button class="filter-pill" data-filter="github">GitHub Trending</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="section-count">{sortedPosts.length} 期</span>
+          <div class="view-toggle">
+            <button class="active" id="grid-btn" title="网格视图">⊞</button>
+            <button id="list-btn" title="列表视图">≡</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Posts -->
+  <section class="posts-section">
+    <div class="page-container">
+      {sortedPosts.length === 0 ? (
+        <div class="empty-state">暂无内容</div>
+      ) : (
+        <div class="posts-grid" id="posts-grid">
+          {sortedPosts.map((post, i) => {
+            const date = post.data.pubDate.toISOString().slice(0, 10);
+            const icons = ['🤖', '📡', '🧠', '⚡', '🔮'];
+            return (
+              <a href={`/posts/${post.slug}`} class="post-card" data-filter="all">
+                <div class="post-card-image">{icons[i % icons.length]}</div>
+                <div class="post-card-body">
+                  <span class="post-card-date">{date}</span>
+                  <h3 class="post-card-title">{post.data.title}</h3>
+                  <p class="post-card-excerpt">{post.data.description || '每日AI新闻摘要及GitHub Trending热榜项目推荐。'}</p>
+                  <div class="post-card-footer">
+                    <span class="post-card-sources">AIBase · 机器之心 · 新智元</span>
+                    <span class="read-link">阅读 →</span>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  </section>
 
   <footer class="site-footer">
     <div class="footer-inner">
       <div>
         <div class="footer-brand">
-          <span>🤖</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="#bfb29c" stroke-width="2"/>
+            <path d="M12 6v6l4 2" stroke="#bfb29c" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="2" fill="#bfb29c"/>
+          </svg>
           <span>AI新闻简报</span>
         </div>
         <p class="footer-note">由 AI 自动聚合 · 每日更新</p>
@@ -102,23 +121,23 @@ const sortedPosts = posts
   </footer>
 </Layout>
 
-<style>
-  /* Hidden list view — toggled via JS */
-  .posts-list { display: none; }
-</style>
-
 <script>
-  const gridBtn = document.getElementById('grid-view-btn');
-  const listBtn = document.getElementById('list-view-btn');
+  // View toggle
+  const gridBtn = document.getElementById('grid-btn');
+  const listBtn = document.getElementById('list-btn');
   const grid = document.getElementById('posts-grid');
 
   function showGrid() {
     if (!grid) return;
     grid.style.display = 'grid';
-    grid.classList.remove('posts-list');
     grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
     grid.querySelectorAll('.post-card').forEach(card => {
-      (card as HTMLElement).style.display = '';
+      const el = card as HTMLElement;
+      el.style.display = '';
+      el.style.flexDirection = '';
+      el.style.alignItems = '';
+      const img = el.querySelector('.post-card-image') as HTMLElement;
+      if (img) img.style.display = '';
     });
     gridBtn.classList.add('active');
     listBtn.classList.remove('active');
@@ -129,20 +148,13 @@ const sortedPosts = posts
     grid.style.display = 'flex';
     grid.style.flexDirection = 'column';
     grid.style.gridTemplateColumns = '';
-    grid.querySelectorAll('.post-card').forEach((card, i) => {
+    grid.querySelectorAll('.post-card').forEach(card => {
       const el = card as HTMLElement;
       el.style.display = 'flex';
       el.style.flexDirection = 'row';
       el.style.alignItems = 'center';
-      el.style.gap = '20px';
-      // date + title + arrow layout
-      const meta = card.querySelector('.post-card-meta');
-      const title = card.querySelector('.post-card-title');
-      const excerpt = card.querySelector('.post-card-excerpt');
-      const footer = card.querySelector('.post-card-footer');
-      if (meta) (meta as HTMLElement).style.display = '';
-      if (excerpt) (excerpt as HTMLElement).style.display = 'none';
-      if (footer) (footer as HTMLElement).style.display = 'none';
+      const img = el.querySelector('.post-card-image') as HTMLElement;
+      if (img) img.style.display = 'none';
     });
     listBtn.classList.add('active');
     gridBtn.classList.remove('active');
