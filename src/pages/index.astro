@@ -6,6 +6,10 @@ const posts = await getCollection('posts');
 const sortedPosts = posts
   .filter(p => !p.data.draft)
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+// Separate by category
+const newsPosts = sortedPosts.filter(p => p.data.category === 'news');
+const githubPosts = sortedPosts.filter(p => p.data.category === 'github');
 ---
 
 <Layout title="AI新闻简报 - 每日AI行业资讯" description="每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。">
@@ -14,7 +18,7 @@ const sortedPosts = posts
     <div class="nav-inner">
       <a href="/" class="nav-brand">
         <div class="nav-brand-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" stroke="#001f1f" stroke-width="2"/>
             <path d="M12 6v6l4 2" stroke="#001f1f" stroke-width="2" stroke-linecap="round"/>
             <circle cx="12" cy="12" r="2" fill="#001f1f"/>
@@ -27,7 +31,7 @@ const sortedPosts = posts
         <a href="/archive">历史存档</a>
       </div>
       <div class="nav-right">
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题" title="切换主题">☀️</button>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">☀️</button>
       </div>
     </div>
   </nav>
@@ -47,21 +51,28 @@ const sortedPosts = posts
     </div>
   </section>
 
-  <!-- Filters & Toolbar (cream) -->
-  <section class="filters-bar">
+  <!-- Category Links (cream) -->
+  <section class="category-bar">
     <div class="page-container">
-      <div class="filters-inner">
-        <div class="filter-pills">
-          <button class="filter-pill active" data-filter="all">全部</button>
-          <button class="filter-pill" data-filter="news">每日AI新闻</button>
-          <button class="filter-pill" data-filter="github">GitHub Trending</button>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span class="section-count">{sortedPosts.length} 期</span>
-          <div class="view-toggle">
-            <button class="active" id="grid-btn" title="网格视图">⊞</button>
-            <button id="list-btn" title="列表视图">≡</button>
-          </div>
+      <div class="category-inner">
+        <a href="/" class="category-link active">
+          <span class="category-icon">📰</span>
+          <span>全部</span>
+          <span class="category-count">{sortedPosts.length}</span>
+        </a>
+        <a href="/?cat=news" class="category-link">
+          <span class="category-icon">🤖</span>
+          <span>每日AI新闻</span>
+          <span class="category-count">{newsPosts.length}</span>
+        </a>
+        <a href="/?cat=github" class="category-link">
+          <span class="category-icon">🔥</span>
+          <span>GitHub Trending</span>
+          <span class="category-count">{githubPosts.length}</span>
+        </a>
+        <div class="view-toggle">
+          <button class="active" id="grid-btn" title="网格视图">⊞</button>
+          <button id="list-btn" title="列表视图">≡</button>
         </div>
       </div>
     </div>
@@ -70,30 +81,32 @@ const sortedPosts = posts
   <!-- Posts -->
   <section class="posts-section">
     <div class="page-container">
-      {sortedPosts.length === 0 ? (
-        <div class="empty-state">暂无内容</div>
-      ) : (
-        <div class="posts-grid" id="posts-grid">
-          {sortedPosts.map((post, i) => {
-            const date = post.data.pubDate.toISOString().slice(0, 10);
-            const icons = ['🤖', '📡', '🧠', '⚡', '🔮'];
-            return (
-              <a href={`/posts/${post.slug}`} class="post-card" data-filter="all">
-                <div class="post-card-image">{icons[i % icons.length]}</div>
-                <div class="post-card-body">
-                  <span class="post-card-date">{date}</span>
-                  <h3 class="post-card-title">{post.data.title}</h3>
-                  <p class="post-card-excerpt">{post.data.description || '每日AI新闻摘要及GitHub Trending热榜项目推荐。'}</p>
-                  <div class="post-card-footer">
-                    <span class="post-card-sources">AIBase · 机器之心 · 新智元</span>
-                    <span class="read-link">阅读 →</span>
-                  </div>
+      <div class="posts-grid" id="posts-grid">
+        {sortedPosts.map((post) => {
+          const date = post.data.pubDate.toISOString().slice(0, 10);
+          const cat = post.data.category || 'news';
+          return (
+            <a href={`/posts/${post.slug}`} class="post-card" data-cat={cat}>
+              <div class="post-card-image">
+                {post.data.coverImage ? (
+                  <img src={post.data.coverImage} alt={post.data.coverAlt || post.data.title} loading="lazy" />
+                ) : (
+                  <span class="post-card-emoji">{cat === 'github' ? '🔥' : '🤖'}</span>
+                )}
+                <span class={`post-card-badge ${cat}`}>{cat === 'github' ? 'GitHub' : 'AI新闻'}</span>
+              </div>
+              <div class="post-card-body">
+                <span class="post-card-date">{date}</span>
+                <h3 class="post-card-title">{post.data.title}</h3>
+                <p class="post-card-excerpt">{post.data.description || ''}</p>
+                <div class="post-card-footer">
+                  <span class="read-link">阅读 →</span>
                 </div>
-              </a>
-            );
-          })}
-        </div>
-      )}
+              </div>
+            </a>
+          );
+        })}
+      </div>
     </div>
   </section>
 
@@ -120,6 +133,118 @@ const sortedPosts = posts
     </div>
   </footer>
 </Layout>
+
+<style>
+  /* Category bar */
+  .category-bar {
+    background: var(--bg-cream);
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .category-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .category-link {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 24px;
+    transition: all 0.2s var(--ease);
+    text-decoration: none;
+  }
+
+  .category-link:hover {
+    border-color: var(--gold);
+    color: var(--text-primary);
+  }
+
+  .category-link.active {
+    background: var(--green-deep);
+    border-color: var(--green-deep);
+    color: var(--gold);
+  }
+
+  .category-icon { font-size: 0.9rem; }
+
+  .category-count {
+    background: rgba(0,0,0,0.06);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .category-link.active .category-count {
+    background: rgba(191,178,156,0.2);
+  }
+
+  /* View toggle inherits from Layout */
+  .view-toggle {
+    margin-left: auto;
+  }
+
+  /* Post card image */
+  .post-card-image {
+    position: relative;
+    height: 160px;
+    background: var(--bg-cream);
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .post-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s var(--ease);
+  }
+
+  .post-card:hover .post-card-image img {
+    transform: scale(1.04);
+  }
+
+  .post-card-emoji {
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .post-card-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: var(--green-deep);
+    color: var(--gold);
+  }
+
+  .post-card-badge.github {
+    background: #2d1f00;
+    color: #f0c040;
+  }
+</style>
 
 <script>
   // View toggle
@@ -162,4 +287,23 @@ const sortedPosts = posts
 
   gridBtn.addEventListener('click', showGrid);
   listBtn.addEventListener('click', showList);
+
+  // Category filter from URL param
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get('cat');
+  if (cat) {
+    document.querySelectorAll('.category-link').forEach(link => {
+      const el = link as HTMLElement;
+      el.classList.remove('active');
+      if (el.getAttribute('href') === `/?cat=${cat}`) {
+        el.classList.add('active');
+      }
+    });
+    document.querySelectorAll('.post-card').forEach(card => {
+      const el = card as HTMLElement;
+      if (el.getAttribute('data-cat') !== cat) {
+        el.style.display = 'none';
+      }
+    });
+  }
 </script>

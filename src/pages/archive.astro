@@ -60,13 +60,17 @@ const months = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
           <div class="archive-group">
             <div class="archive-month-label">{month}</div>
             <div class="archive-list">
-              {grouped[month].map(post => (
+              {grouped[month].map(post => {
+                const cat = post.data.category || 'news';
+                return (
                 <a href={`/posts/${post.slug}`} class="archive-item">
                   <span class="archive-item-date">{post.data.pubDate.toISOString().slice(8, 10)}日</span>
+                  <span class={`archive-item-cat ${cat}`}>{cat === 'github' ? 'GitHub' : 'AI新闻'}</span>
                   <span class="archive-item-title">{post.data.title}</span>
                   <span class="archive-item-arrow">→</span>
                 </a>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))

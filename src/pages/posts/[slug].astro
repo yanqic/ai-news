@@ -13,6 +13,7 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await post.render();
 const postDate = post.data.pubDate.toISOString().slice(0, 10);
+const cat = post.data.category || 'news';
 ---
 
 <Layout title={`${post.data.title} - AI新闻简报`} description={post.data.description}>
@@ -34,20 +35,28 @@ const postDate = post.data.pubDate.toISOString().slice(0, 10);
         <a href="/archive">历史存档</a>
       </div>
       <div class="nav-right">
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">☀️</button>
+        <button class="theme-toggle" onclick="toggleTheme()">☀️</button>
       </div>
     </div>
   </nav>
 
+  <!-- Cover image -->
+  {post.data.coverImage && (
+    <div class="article-cover">
+      <img src={post.data.coverImage} alt={post.data.coverAlt || post.data.title} />
+    </div>
+  )}
+
   <!-- Content area (cream) -->
   <div class="post-page">
     <div class="post-page-inner">
-      <a href="/archive" class="post-back">
-        ← 返回存档
-      </a>
+      <a href="/" class="post-back">← 返回首页</a>
 
       <header class="post-header">
-        <div class="post-date">{postDate}</div>
+        <div class="post-meta">
+          <span class={`post-cat-badge ${cat}`}>{cat === 'github' ? 'GitHub Trending' : 'AI新闻'}</span>
+          <span class="post-date">{postDate}</span>
+        </div>
         <h1 class="post-title">{post.data.title}</h1>
         {post.data.description && (
           <p class="post-description">{post.data.description}</p>
@@ -93,3 +102,216 @@ const postDate = post.data.pubDate.toISOString().slice(0, 10);
     </div>
   </footer>
 </Layout>
+
+<style>
+  /* Article cover image */
+  .article-cover {
+    width: 100%;
+    max-height: 420px;
+    overflow: hidden;
+    background: var(--green-deep);
+  }
+
+  .article-cover img {
+    width: 100%;
+    height: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Post page */
+  .post-page {
+    background: var(--bg-cream);
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .post-page-inner {
+    max-width: var(--max-w-narrow);
+    margin: 0 auto;
+  }
+
+  .post-back {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: var(--space-lg);
+    transition: color 0.2s;
+  }
+
+  .post-back:hover { color: var(--gold); }
+
+  .post-header {
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-lg);
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .post-cat-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 3px;
+    background: var(--green-deep);
+    color: var(--gold);
+  }
+
+  .post-cat-badge.github {
+    background: #2d1f00;
+    color: #f0c040;
+  }
+
+  .post-date {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .post-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+  }
+
+  .post-description {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    font-weight: 300;
+  }
+
+  /* Article body prose */
+  .post-body {
+    font-size: 0.9375rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+  }
+
+  .post-body :global(h2) {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 2em 0 0.8em;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .post-body :global(h3) {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 1.5em 0 0.6em;
+  }
+
+  .post-body :global(p) {
+    margin-bottom: 1em;
+  }
+
+  .post-body :global(ul), .post-body :global(ol) {
+    padding-left: 1.5em;
+    margin-bottom: 1em;
+  }
+
+  .post-body :global(li) {
+    margin-bottom: 0.4em;
+    line-height: 1.7;
+  }
+
+  .post-body :global(strong) {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .post-body :global(a) {
+    color: var(--gold-dark);
+    border-bottom: 1px solid var(--gold);
+    transition: color 0.2s;
+  }
+
+  .post-body :global(a:hover) {
+    color: var(--gold);
+  }
+
+  .post-body :global(code) {
+    font-family: 'Courier New', monospace;
+    font-size: 0.875em;
+    background: var(--bg-cream);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  .post-body :global(blockquote) {
+    border-left: 3px solid var(--gold);
+    padding-left: 1.2em;
+    margin: 1.5em 0;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .post-body :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2em 0;
+  }
+
+  /* Sources */
+  .sources-box {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    align-items: center;
+  }
+
+  .sources-box h4 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    width: 100%;
+    margin: 0;
+  }
+
+  .sources-box a {
+    font-size: 0.8rem;
+    color: var(--gold-dark);
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .sources-box a:hover {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  .sources-note {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    width: 100%;
+    margin: 0;
+  }
+</style>
