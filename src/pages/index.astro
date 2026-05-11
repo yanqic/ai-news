@@ -12,246 +12,384 @@ const { Content: LatestContent } = latestPost ? (await latestPost.render()) : { 
 ---
 
 <Layout title="AI新闻简报 - 每日AI行业资讯" description="每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。">
-  <div class="nav">
-    <span class="logo">🤖 AI新闻简报</span>
+  <!-- Navigation -->
+  <nav class="site-nav">
+    <a href="/" class="nav-brand">
+      <div class="nav-brand-icon">🤖</div>
+      <span class="nav-brand-text">AI新闻简报</span>
+    </a>
     <div class="nav-links">
-      <a href="/archive">📁 历史存档</a>
+      <a href="/" class="active">首页</a>
+      <a href="/archive">历史存档</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">
+        <span>🌓</span>
+        <span class="theme-label">深色模式</span>
+      </button>
     </div>
-  </div>
+  </nav>
 
   <main>
+    <!-- Hero Section -->
     <section class="hero">
-      <h1>每日AI新闻</h1>
-      <p>汇集 AIBase、机器之心、新智元、Google AI Blog 等来源的AI行业资讯，以及 GitHub Trending 项目推荐。</p>
+      <div class="hero-inner">
+        <div class="hero-badge">每日更新</div>
+        <h1 class="hero-title">AI行业资讯</h1>
+        <p class="hero-sub">汇集 AIBase、机器之心、新智元、Google AI Blog 等来源的AI行业动态<br class="hero-br"> 与 GitHub Trending 项目推荐</p>
+        <div class="hero-meta">
+          <span>📡 多源聚合</span>
+          <span class="hero-dot">·</span>
+          <span>🤖 AI摘要</span>
+          <span class="hero-dot">·</span>
+          <span>🌐 中文呈现</span>
+        </div>
+      </div>
+      <div class="hero-decoration">
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+      </div>
     </section>
 
+    <!-- Latest Post -->
     {latestPost ? (
-      <section class="latest">
-        <div class="section-header">
-          <h2>📰 最新一期</h2>
-          <span class="date-badge">{latestPost.data.pubDate.toISOString().slice(0, 10)}</span>
-        </div>
-        <article class="post-card">
-          <h3>{latestPost.data.title}</h3>
-          <div class="post-content">
-            <LatestContent />
+      <section class="latest-section">
+        <div class="section-label">最新一期</div>
+        <a href={`/posts/${latestPost.slug}`} class="latest-card">
+          <div class="latest-card-left">
+            <div class="latest-date">{latestPost.data.pubDate.toISOString().slice(0, 10)}</div>
+            <h2 class="latest-title">{latestPost.data.title}</h2>
+            <div class="latest-preview">
+              <LatestContent />
+            </div>
+            <div class="latest-cta">
+              <span>阅读全文</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
           </div>
-          <a href={`/posts/${latestPost.slug}`} class="read-more">阅读全文 →</a>
-        </article>
+          <div class="latest-card-right">
+            <div class="latest-icon">📰</div>
+          </div>
+        </a>
       </section>
     ) : (
-      <p class="empty">暂无内容</p>
+      <div class="empty-state">暂无内容</div>
     )}
 
+    <!-- Archive preview -->
     {sortedPosts.length > 1 && (
-      <section class="older">
-        <h2>📂 历史文章</h2>
-        <div class="post-list">
-          {sortedPosts.slice(1).map(post => (
-            <a href={`/posts/${post.slug}`} class="post-item">
-              <span class="post-date">{post.data.pubDate.toISOString().slice(0, 10)}</span>
-              <span class="post-title">{post.data.title}</span>
-              <span class="arrow">→</span>
+      <section class="archive-section">
+        <div class="section-label">历史文章</div>
+        <div class="archive-list">
+          {sortedPosts.slice(1, 7).map((post, i) => (
+            <a href={`/posts/${post.slug}`} class="archive-item" style={`--delay: ${i * 50}ms`}>
+              <div class="archive-item-date">{post.data.pubDate.toISOString().slice(0, 10)}</div>
+              <div class="archive-item-title">{post.data.title.replace('AI新闻简报 ', '')}</div>
+              <div class="archive-item-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
             </a>
           ))}
         </div>
-        <a href="/archive" class="view-all">查看全部 {sortedPosts.length} 篇 →</a>
+        <a href="/archive" class="view-all">
+          <span>查看全部 {sortedPosts.length} 篇</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
       </section>
     )}
   </main>
 
-  <footer>
-    <p>📡 AI新闻来源：AIBase、机器之心、新智元、Google AI Blog</p>
-    <p>⭐ GitHub数据来源：github.com/trending</p>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">
+          <span>🤖</span>
+          <span>AI新闻简报</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.85em; margin-top: 6px;">由 AI 自动聚合 · 每日更新</p>
+      </div>
+      <div class="footer-sources">
+        <p style="margin-bottom: 8px; font-weight: 600; color: var(--text-secondary);">数据来源</p>
+        <a href="https://news.aibase.com/zh" target="_blank" rel="noopener">AIBase</a>
+        <a href="https://jiqizhixin.com" target="_blank" rel="noopener">机器之心</a>
+        <a href="https://xinzhiyuan.ai" target="_blank" rel="noopener">新智元</a>
+        <a href="https://blog.google/technology/ai/" target="_blank" rel="noopener">Google AI</a>
+        <a href="https://github.com/trending" target="_blank" rel="noopener">GitHub Trending</a>
+      </div>
+    </div>
   </footer>
 </Layout>
 
 <style>
-  .nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
-  }
-  .logo {
-    font-size: 1.2em;
-    font-weight: 600;
-  }
-  .nav-links a {
-    color: var(--accent-color);
-    text-decoration: none;
-    font-size: 0.95em;
-  }
-  .nav-links a:hover {
-    text-decoration: underline;
-  }
-
+  /* ─── Hero ─── */
   .hero {
-    text-align: center;
-    padding: 40px 20px;
-    background: var(--bg-secondary);
-    border-radius: 12px;
-    margin-bottom: 30px;
-  }
-  .hero h1 {
-    font-size: 2em;
-    margin-bottom: 10px;
-    border: none;
-    padding: 0;
-  }
-  .hero p {
-    color: var(--text-secondary);
-    max-width: 500px;
-    margin: 0 auto;
-    line-height: 1.6;
+    position: relative;
+    padding: 56px 0 48px;
+    overflow: hidden;
   }
 
-  .latest {
-    margin-bottom: 40px;
+  .hero-inner {
+    position: relative;
+    z-index: 1;
   }
-  .section-header {
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 20%, transparent);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.4em, 6vw, 3.8em);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.05em;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 520px;
+    margin-bottom: 24px;
+  }
+
+  .hero-br { display: none; }
+  @media (min-width: 600px) { .hero-br { display: inline; } }
+
+  .hero-meta {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-  .section-header h2 {
-    margin: 0;
-    padding: 0;
-    background: none;
-    border: none;
-    font-size: 1.3em;
-  }
-  .date-badge {
-    background: var(--accent-color);
-    color: white;
-    padding: 2px 10px;
-    border-radius: 12px;
+    gap: 10px;
     font-size: 0.85em;
+    color: var(--text-muted);
+    font-weight: 500;
   }
 
-  .post-card {
-    background: var(--bg-secondary);
-    border-radius: 12px;
-    padding: 24px;
-    border: 1px solid var(--border-color);
+  .hero-dot { color: var(--border-color); }
+
+  .hero-decoration {
+    position: absolute;
+    top: 0;
+    right: -60px;
+    width: 300px;
+    height: 300px;
+    pointer-events: none;
   }
-  .post-card h3 {
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.15;
+  }
+
+  .hero-orb-1 {
+    width: 200px;
+    height: 200px;
+    background: var(--accent-color);
+    top: 20px;
+    right: 80px;
+  }
+
+  .hero-orb-2 {
+    width: 140px;
+    height: 140px;
+    background: #764ba2;
+    top: 80px;
+    right: 20px;
+  }
+
+  /* ─── Latest section ─── */
+  .latest-section {
+    margin-bottom: 56px;
+  }
+
+  .latest-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .latest-card:hover {
+    border-color: var(--accent-color);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    opacity: 1;
+  }
+
+  .latest-card-left { flex: 1; min-width: 0; }
+
+  .latest-date {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+    letter-spacing: 0.03em;
+  }
+
+  .latest-title {
+    font-size: 1.5em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     margin: 0 0 16px;
-    font-size: 1.4em;
+    line-height: 1.3;
     border: none;
     padding: 0;
     background: none;
   }
-  .post-content {
-    font-size: 0.95em;
+
+  .latest-preview {
+    font-size: 0.92em;
+    color: var(--text-secondary);
     line-height: 1.8;
-    max-height: 400px;
+    max-height: 180px;
     overflow: hidden;
     position: relative;
   }
-  .post-content::after {
+
+  .latest-preview::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     height: 60px;
-    background: linear-gradient(transparent, var(--bg-secondary));
-  }
-  .read-more {
-    display: inline-block;
-    margin-top: 16px;
-    color: var(--accent-color);
-    text-decoration: none;
-    font-weight: 500;
-  }
-  .read-more:hover {
-    text-decoration: underline;
+    background: linear-gradient(transparent, var(--bg-card));
   }
 
-  .older h2 {
-    font-size: 1.2em;
-    margin-bottom: 12px;
-    padding: 0;
-    background: none;
-    border: none;
+  .latest-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--accent-color);
   }
-  .post-list {
+
+  .latest-card-right {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+  }
+
+  /* ─── Archive section ─── */
+  .archive-section { margin-bottom: 56px; }
+
+  .archive-list {
     display: flex;
     flex-direction: column;
     gap: 2px;
     margin-bottom: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
   }
-  .post-item {
+
+  .archive-item {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    background: var(--bg-secondary);
-    border-radius: 8px;
+    padding: 16px 20px;
     text-decoration: none;
-    color: var(--text-primary);
+    color: inherit;
+    gap: 16px;
+    border-bottom: 1px solid var(--border-color);
     transition: all 0.2s;
+    animation: fadeSlideIn 0.4s ease both;
+    animation-delay: var(--delay, 0ms);
   }
-  .post-item:hover {
-    border: 1px solid var(--accent-color);
-    transform: translateX(4px);
+
+  .archive-item:last-child { border-bottom: none; }
+
+  .archive-item:hover {
+    background: color-mix(in srgb, var(--accent-color) 5%, transparent);
+    padding-left: 28px;
   }
-  .post-date {
-    font-size: 0.85em;
-    color: var(--text-secondary);
-    min-width: 90px;
+
+  .archive-item:hover .archive-item-arrow {
+    opacity: 1;
+    transform: translateX(2px);
   }
-  .post-title {
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .archive-item-date {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    font-weight: 500;
+    min-width: 88px;
+    flex-shrink: 0;
+  }
+
+  .archive-item-title {
     flex: 1;
+    font-weight: 500;
+    font-size: 0.95em;
+    color: var(--text-primary);
   }
-  .arrow {
+
+  .archive-item-arrow {
     color: var(--accent-color);
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: all 0.2s;
   }
-  .post-item:hover .arrow {
-    opacity: 1;
-  }
+
   .view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     color: var(--accent-color);
     text-decoration: none;
-    font-size: 0.95em;
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 10px 0;
+    transition: gap 0.2s;
   }
+
   .view-all:hover {
-    text-decoration: underline;
-  }
-
-  .empty {
-    text-align: center;
-    color: var(--text-secondary);
-    padding: 60px 20px;
-  }
-
-  footer {
-    margin-top: 60px;
-    padding: 20px;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.85em;
-  }
-  footer p {
-    margin: 4px 0;
+    gap: 10px;
+    opacity: 1;
   }
 
   @media (max-width: 600px) {
-    .hero {
-      padding: 30px 16px;
-    }
-    .hero h1 {
-      font-size: 1.6em;
-    }
-    .post-card {
-      padding: 16px;
-    }
+    .hero { padding: 36px 0 32px; }
+    .hero-title { font-size: 2.2em; }
+    .latest-card { padding: 20px; flex-direction: column; }
+    .latest-card-right { display: none; }
+    .archive-item { padding: 14px 16px; }
+    .archive-item-title { font-size: 0.9em; }
   }
 </style>
