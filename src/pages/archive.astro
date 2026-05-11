@@ -6,183 +6,72 @@ const posts = await getCollection('posts');
 const sortedPosts = posts
   .filter(p => !p.data.draft)
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
-
-// Group by year-month
-const grouped = sortedPosts.reduce((acc, post) => {
-  const key = post.data.pubDate.toISOString().slice(0, 7);
-  if (!acc[key]) acc[key] = [];
-  acc[key].push(post);
-  return acc;
-}, {} as Record<string, typeof posts>);
-
-const months = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 ---
 
 <Layout title="历史存档 - AI新闻简报" description="AI新闻简报历史文章存档">
   <!-- Navigation -->
   <nav class="site-nav">
-    <a href="/" class="nav-brand">
-      <div class="nav-brand-icon">🤖</div>
-      <span class="nav-brand-text">AI新闻简报</span>
-    </a>
-    <div class="nav-links">
-      <a href="/">首页</a>
-      <a href="/archive" class="active">历史存档</a>
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">
-        <span>🌓</span>
-        <span class="theme-label">深色模式</span>
-      </button>
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <div class="nav-brand-icon">🤖</div>
+        <span>AI新闻简报</span>
+      </a>
+      <div class="nav-links">
+        <a href="/">首页</a>
+        <a href="/archive" class="active">历史存档</a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">☀️</button>
+      </div>
     </div>
   </nav>
 
   <main>
-    <header class="archive-header">
-      <div class="archive-header-inner">
+    <div class="page-container">
+      <!-- Archive header -->
+      <section class="archive-header">
         <h1>历史存档</h1>
-        <p class="archive-subtitle">共 {sortedPosts.length} 期</p>
-      </div>
-      <a href="/" class="back-link" style="margin-top: 16px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        返回首页
-      </a>
-    </header>
+        <p>共 {sortedPosts.length} 期内容</p>
+      </section>
 
-    {sortedPosts.length === 0 ? (
-      <div class="empty-state">暂无内容</div>
-    ) : (
-      <div class="archive-groups">
-        {months.map(month => (
-          <div class="archive-group">
-            <div class="archive-month-label">{month}</div>
-            <div class="archive-list">
-              {grouped[month].map((post, i) => (
-                <a href={`/posts/${post.slug}`} class="archive-item" style={`--delay: ${i * 40}ms`}>
-                  <div class="archive-item-date">
-                    {post.data.pubDate.toISOString().slice(8, 10)}日
-                  </div>
-                  <div class="archive-item-title">{post.data.title}</div>
-                  <div class="archive-item-arrow">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  </div>
+      <!-- Archive list -->
+      <div class="posts-section">
+        {sortedPosts.length === 0 ? (
+          <div class="empty-state">暂无内容</div>
+        ) : (
+          <div class="posts-list">
+            {sortedPosts.map(post => {
+              const date = post.data.pubDate.toISOString().slice(0, 10);
+              return (
+                <a href={`/posts/${post.slug}`} class="post-list-item">
+                  <span class="post-list-item-date">{date}</span>
+                  <span class="post-list-item-title">{post.data.title}</span>
+                  <span class="post-list-item-arrow">→</span>
                 </a>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        ))}
+        )}
       </div>
-    )}
+    </div>
   </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">
+          <span>🤖</span>
+          <span>AI新闻简报</span>
+        </div>
+        <p class="footer-note">由 AI 自动聚合 · 每日更新</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://news.aibase.com/zh" target="_blank" rel="noopener">AIBase</a>
+        <a href="https://jiqizhixin.com" target="_blank" rel="noopener">机器之心</a>
+        <a href="https://xinzhiyuan.ai" target="_blank" rel="noopener">新智元</a>
+        <a href="https://blog.google/technology/ai/" target="_blank" rel="noopener">Google AI</a>
+        <a href="https://github.com/trending" target="_blank" rel="noopener">GitHub Trending</a>
+      </div>
+    </div>
+  </footer>
 </Layout>
-
-<style>
-  .archive-header {
-    padding: 48px 0 32px;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 40px;
-  }
-
-  .archive-header-inner {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .archive-header h1 {
-    font-size: 2em;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    border: none;
-    padding: 0;
-    background: none;
-  }
-
-  .archive-subtitle {
-    font-size: 0.9em;
-    color: var(--text-muted);
-    font-weight: 500;
-    margin: 0;
-  }
-
-  .archive-groups {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-  }
-
-  .archive-month-label {
-    font-size: 0.78em;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    padding-left: 4px;
-  }
-
-  .archive-list {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-
-  .archive-item {
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    text-decoration: none;
-    color: inherit;
-    gap: 16px;
-    border-bottom: 1px solid var(--border-color);
-    transition: all 0.2s;
-    animation: fadeSlideIn 0.4s ease both;
-    animation-delay: var(--delay, 0ms);
-  }
-
-  .archive-item:last-child { border-bottom: none; }
-
-  .archive-item:hover {
-    background: color-mix(in srgb, var(--accent-color) 5%, transparent);
-    padding-left: 28px;
-  }
-
-  .archive-item:hover .archive-item-arrow {
-    opacity: 1;
-    transform: translateX(2px);
-  }
-
-  @keyframes fadeSlideIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .archive-item-date {
-    font-size: 0.8em;
-    color: var(--accent-color);
-    font-weight: 700;
-    min-width: 32px;
-    flex-shrink: 0;
-    font-family: 'Inter', monospace;
-  }
-
-  .archive-item-title {
-    flex: 1;
-    font-weight: 500;
-    font-size: 0.95em;
-    color: var(--text-primary);
-  }
-
-  .archive-item-arrow {
-    color: var(--accent-color);
-    opacity: 0;
-    transition: all 0.2s;
-  }
-
-  @media (max-width: 600px) {
-    .archive-header { padding: 32px 0 24px; }
-    .archive-header h1 { font-size: 1.7em; }
-    .archive-item { padding: 14px 16px; }
-    .archive-item-title { font-size: 0.9em; }
-  }
-</style>

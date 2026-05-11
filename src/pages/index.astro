@@ -6,95 +6,80 @@ const posts = await getCollection('posts');
 const sortedPosts = posts
   .filter(p => !p.data.draft)
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
-
-const latestPost = sortedPosts[0];
-const { Content: LatestContent } = latestPost ? (await latestPost.render()) : { Content: null };
 ---
 
 <Layout title="AI新闻简报 - 每日AI行业资讯" description="每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。">
   <!-- Navigation -->
   <nav class="site-nav">
-    <a href="/" class="nav-brand">
-      <div class="nav-brand-icon">🤖</div>
-      <span class="nav-brand-text">AI新闻简报</span>
-    </a>
-    <div class="nav-links">
-      <a href="/" class="active">首页</a>
-      <a href="/archive">历史存档</a>
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">
-        <span>🌓</span>
-        <span class="theme-label">深色模式</span>
-      </button>
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <div class="nav-brand-icon">🤖</div>
+        <span>AI新闻简报</span>
+      </a>
+      <div class="nav-links">
+        <a href="/" class="active">首页</a>
+        <a href="/archive">历史存档</a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题" title="切换主题">☀️</button>
+      </div>
     </div>
   </nav>
 
   <main>
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-inner">
-        <div class="hero-badge">每日更新</div>
-        <h1 class="hero-title">AI行业资讯</h1>
-        <p class="hero-sub">汇集 AIBase、机器之心、新智元、Google AI Blog 等来源的AI行业动态<br class="hero-br"> 与 GitHub Trending 项目推荐</p>
-        <div class="hero-meta">
-          <span>📡 多源聚合</span>
-          <span class="hero-dot">·</span>
-          <span>🤖 AI摘要</span>
-          <span class="hero-dot">·</span>
-          <span>🌐 中文呈现</span>
+    <div class="page-container">
+      <!-- Hero -->
+      <section class="blog-hero">
+        <div class="blog-hero-inner">
+          <h1>AI新闻简报</h1>
+          <p>每日追踪 AIBase、机器之心、新智元、Google AI Blog 等来源的AI行业动态，与 GitHub Trending 热门项目推荐。</p>
+        </div>
+      </section>
+
+      <!-- Category filters -->
+      <div class="category-filters">
+        <button class="category-pill active" data-category="all">全部</button>
+        <button class="category-pill" data-category="news">每日AI新闻</button>
+        <button class="category-pill" data-category="github">GitHub Trending</button>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="section-toolbar">
+        <span class="section-count">{sortedPosts.length} 期内容</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="view-toggle">
+            <button class="active" id="grid-view-btn" title="网格视图" aria-label="网格视图">⊞</button>
+            <button id="list-view-btn" title="列表视图" aria-label="列表视图">≡</button>
+          </div>
         </div>
       </div>
-      <div class="hero-decoration">
-        <div class="hero-orb hero-orb-1"></div>
-        <div class="hero-orb hero-orb-2"></div>
+
+      <!-- Posts grid -->
+      <div class="posts-section">
+        {sortedPosts.length === 0 ? (
+          <div class="empty-state">暂无内容</div>
+        ) : (
+          <div class="posts-grid" id="posts-grid">
+            {sortedPosts.map(post => {
+              const date = post.data.pubDate.toISOString().slice(0, 10);
+              return (
+                <a href={`/posts/${post.slug}`} class="post-card" data-date={date}>
+                  <div class="post-card-meta">
+                    <span class="post-card-date">{date}</span>
+                  </div>
+                  <div class="post-card-title">{post.data.title}</div>
+                  <div class="post-card-excerpt">{post.data.description || '每日AI新闻摘要及GitHub Trending热榜项目推荐。'}</div>
+                  <div class="post-card-footer">
+                    <span class="post-card-sources">AIBase · 机器之心 · 新智元</span>
+                    <span class="read-more-link">阅读 →</span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        )}
       </div>
-    </section>
-
-    <!-- Latest Post -->
-    {latestPost ? (
-      <section class="latest-section">
-        <div class="section-label">最新一期</div>
-        <a href={`/posts/${latestPost.slug}`} class="latest-card">
-          <div class="latest-card-left">
-            <div class="latest-date">{latestPost.data.pubDate.toISOString().slice(0, 10)}</div>
-            <h2 class="latest-title">{latestPost.data.title}</h2>
-            <div class="latest-preview">
-              <LatestContent />
-            </div>
-            <div class="latest-cta">
-              <span>阅读全文</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </div>
-          <div class="latest-card-right">
-            <div class="latest-icon">📰</div>
-          </div>
-        </a>
-      </section>
-    ) : (
-      <div class="empty-state">暂无内容</div>
-    )}
-
-    <!-- Archive preview -->
-    {sortedPosts.length > 1 && (
-      <section class="archive-section">
-        <div class="section-label">历史文章</div>
-        <div class="archive-list">
-          {sortedPosts.slice(1, 7).map((post, i) => (
-            <a href={`/posts/${post.slug}`} class="archive-item" style={`--delay: ${i * 50}ms`}>
-              <div class="archive-item-date">{post.data.pubDate.toISOString().slice(0, 10)}</div>
-              <div class="archive-item-title">{post.data.title.replace('AI新闻简报 ', '')}</div>
-              <div class="archive-item-arrow">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </div>
-            </a>
-          ))}
-        </div>
-        <a href="/archive" class="view-all">
-          <span>查看全部 {sortedPosts.length} 篇</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-      </section>
-    )}
+    </div>
   </main>
 
   <footer class="site-footer">
@@ -104,10 +89,9 @@ const { Content: LatestContent } = latestPost ? (await latestPost.render()) : { 
           <span>🤖</span>
           <span>AI新闻简报</span>
         </div>
-        <p style="color: var(--text-muted); font-size: 0.85em; margin-top: 6px;">由 AI 自动聚合 · 每日更新</p>
+        <p class="footer-note">由 AI 自动聚合 · 每日更新</p>
       </div>
-      <div class="footer-sources">
-        <p style="margin-bottom: 8px; font-weight: 600; color: var(--text-secondary);">数据来源</p>
+      <div class="footer-links">
         <a href="https://news.aibase.com/zh" target="_blank" rel="noopener">AIBase</a>
         <a href="https://jiqizhixin.com" target="_blank" rel="noopener">机器之心</a>
         <a href="https://xinzhiyuan.ai" target="_blank" rel="noopener">新智元</a>
@@ -119,277 +103,51 @@ const { Content: LatestContent } = latestPost ? (await latestPost.render()) : { 
 </Layout>
 
 <style>
-  /* ─── Hero ─── */
-  .hero {
-    position: relative;
-    padding: 56px 0 48px;
-    overflow: hidden;
-  }
-
-  .hero-inner {
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75em;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--accent-color);
-    background: color-mix(in srgb, var(--accent-color) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent-color) 20%, transparent);
-    padding: 5px 12px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-  }
-
-  .hero-title {
-    font-size: clamp(2.4em, 6vw, 3.8em);
-    font-weight: 700;
-    letter-spacing: -0.04em;
-    line-height: 1.05;
-    margin-bottom: 16px;
-    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero-sub {
-    font-size: 1.05em;
-    color: var(--text-secondary);
-    line-height: 1.7;
-    max-width: 520px;
-    margin-bottom: 24px;
-  }
-
-  .hero-br { display: none; }
-  @media (min-width: 600px) { .hero-br { display: inline; } }
-
-  .hero-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.85em;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-
-  .hero-dot { color: var(--border-color); }
-
-  .hero-decoration {
-    position: absolute;
-    top: 0;
-    right: -60px;
-    width: 300px;
-    height: 300px;
-    pointer-events: none;
-  }
-
-  .hero-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.15;
-  }
-
-  .hero-orb-1 {
-    width: 200px;
-    height: 200px;
-    background: var(--accent-color);
-    top: 20px;
-    right: 80px;
-  }
-
-  .hero-orb-2 {
-    width: 140px;
-    height: 140px;
-    background: #764ba2;
-    top: 80px;
-    right: 20px;
-  }
-
-  /* ─── Latest section ─── */
-  .latest-section {
-    margin-bottom: 56px;
-  }
-
-  .latest-card {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 32px;
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.3s;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .latest-card:hover {
-    border-color: var(--accent-color);
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-    opacity: 1;
-  }
-
-  .latest-card-left { flex: 1; min-width: 0; }
-
-  .latest-date {
-    font-size: 0.8em;
-    font-weight: 600;
-    color: var(--accent-color);
-    margin-bottom: 10px;
-    letter-spacing: 0.03em;
-  }
-
-  .latest-title {
-    font-size: 1.5em;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin: 0 0 16px;
-    line-height: 1.3;
-    border: none;
-    padding: 0;
-    background: none;
-  }
-
-  .latest-preview {
-    font-size: 0.92em;
-    color: var(--text-secondary);
-    line-height: 1.8;
-    max-height: 180px;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .latest-preview::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: linear-gradient(transparent, var(--bg-card));
-  }
-
-  .latest-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 16px;
-    font-size: 0.9em;
-    font-weight: 600;
-    color: var(--accent-color);
-  }
-
-  .latest-card-right {
-    flex-shrink: 0;
-    width: 72px;
-    height: 72px;
-    background: color-mix(in srgb, var(--accent-color) 10%, transparent);
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-  }
-
-  /* ─── Archive section ─── */
-  .archive-section { margin-bottom: 56px; }
-
-  .archive-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-bottom: 16px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-
-  .archive-item {
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    text-decoration: none;
-    color: inherit;
-    gap: 16px;
-    border-bottom: 1px solid var(--border-color);
-    transition: all 0.2s;
-    animation: fadeSlideIn 0.4s ease both;
-    animation-delay: var(--delay, 0ms);
-  }
-
-  .archive-item:last-child { border-bottom: none; }
-
-  .archive-item:hover {
-    background: color-mix(in srgb, var(--accent-color) 5%, transparent);
-    padding-left: 28px;
-  }
-
-  .archive-item:hover .archive-item-arrow {
-    opacity: 1;
-    transform: translateX(2px);
-  }
-
-  @keyframes fadeSlideIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .archive-item-date {
-    font-size: 0.8em;
-    color: var(--text-muted);
-    font-weight: 500;
-    min-width: 88px;
-    flex-shrink: 0;
-  }
-
-  .archive-item-title {
-    flex: 1;
-    font-weight: 500;
-    font-size: 0.95em;
-    color: var(--text-primary);
-  }
-
-  .archive-item-arrow {
-    color: var(--accent-color);
-    opacity: 0;
-    transition: all 0.2s;
-  }
-
-  .view-all {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--accent-color);
-    text-decoration: none;
-    font-size: 0.9em;
-    font-weight: 600;
-    padding: 10px 0;
-    transition: gap 0.2s;
-  }
-
-  .view-all:hover {
-    gap: 10px;
-    opacity: 1;
-  }
-
-  @media (max-width: 600px) {
-    .hero { padding: 36px 0 32px; }
-    .hero-title { font-size: 2.2em; }
-    .latest-card { padding: 20px; flex-direction: column; }
-    .latest-card-right { display: none; }
-    .archive-item { padding: 14px 16px; }
-    .archive-item-title { font-size: 0.9em; }
-  }
+  /* Hidden list view — toggled via JS */
+  .posts-list { display: none; }
 </style>
+
+<script>
+  const gridBtn = document.getElementById('grid-view-btn');
+  const listBtn = document.getElementById('list-view-btn');
+  const grid = document.getElementById('posts-grid');
+
+  function showGrid() {
+    if (!grid) return;
+    grid.style.display = 'grid';
+    grid.classList.remove('posts-list');
+    grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    grid.querySelectorAll('.post-card').forEach(card => {
+      (card as HTMLElement).style.display = '';
+    });
+    gridBtn.classList.add('active');
+    listBtn.classList.remove('active');
+  }
+
+  function showList() {
+    if (!grid) return;
+    grid.style.display = 'flex';
+    grid.style.flexDirection = 'column';
+    grid.style.gridTemplateColumns = '';
+    grid.querySelectorAll('.post-card').forEach((card, i) => {
+      const el = card as HTMLElement;
+      el.style.display = 'flex';
+      el.style.flexDirection = 'row';
+      el.style.alignItems = 'center';
+      el.style.gap = '20px';
+      // date + title + arrow layout
+      const meta = card.querySelector('.post-card-meta');
+      const title = card.querySelector('.post-card-title');
+      const excerpt = card.querySelector('.post-card-excerpt');
+      const footer = card.querySelector('.post-card-footer');
+      if (meta) (meta as HTMLElement).style.display = '';
+      if (excerpt) (excerpt as HTMLElement).style.display = 'none';
+      if (footer) (footer as HTMLElement).style.display = 'none';
+    });
+    listBtn.classList.add('active');
+    gridBtn.classList.remove('active');
+  }
+
+  gridBtn.addEventListener('click', showGrid);
+  listBtn.addEventListener('click', showList);
+</script>

@@ -18,181 +18,53 @@ const postDate = post.data.pubDate.toISOString().slice(0, 10);
 <Layout title={`${post.data.title} - AI新闻简报`} description={post.data.description}>
   <!-- Navigation -->
   <nav class="site-nav">
-    <a href="/" class="nav-brand">
-      <div class="nav-brand-icon">🤖</div>
-      <span class="nav-brand-text">AI新闻简报</span>
-    </a>
-    <div class="nav-links">
-      <a href="/">首页</a>
-      <a href="/archive" class="active">历史存档</a>
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">
-        <span>🌓</span>
-        <span class="theme-label">深色模式</span>
-      </button>
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <div class="nav-brand-icon">🤖</div>
+        <span>AI新闻简报</span>
+      </a>
+      <div class="nav-links">
+        <a href="/">首页</a>
+        <a href="/archive">历史存档</a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">☀️</button>
+      </div>
     </div>
   </nav>
 
   <main>
-    <a href="/archive" class="back-link">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      返回存档
-    </a>
+    <div class="post-page">
+      <a href="/archive" class="post-back">
+        <span>←</span>
+        <span>返回存档</span>
+      </a>
 
-    <!-- Post header -->
-    <header class="post-header">
-      <div class="post-date">{postDate}</div>
-      <h1>{post.data.title}</h1>
-      {post.data.description && (
-        <p class="post-desc">{post.data.description}</p>
-      )}
-    </header>
+      <header class="post-header">
+        <div class="post-date">{postDate}</div>
+        <h1 class="post-title">{post.data.title}</h1>
+        {post.data.description && (
+          <p class="post-description">{post.data.description}</p>
+        )}
+      </header>
 
-    <!-- Post content -->
-    <article class="post-body">
-      <Content />
-    </article>
+      <article class="post-body">
+        <Content />
+      </article>
 
-    <!-- Sources footer -->
-    <div class="sources-footer">
-      <div class="sources-label">
-        <span>📡</span>
-        <span>数据来源</span>
-      </div>
-      <div class="sources-list">
-        <a href="https://news.aibase.com/zh" target="_blank" rel="noopener">AIBase</a>
-        <a href="https://jiqizhixin.com" target="_blank" rel="noopener">机器之心</a>
-        <a href="https://xinzhiyuan.ai" target="_blank" rel="noopener">新智元</a>
-        <a href="https://blog.google/technology/ai/" target="_blank" rel="noopener">Google AI Blog</a>
-        <a href="https://github.com/trending" target="_blank" rel="noopener">GitHub Trending</a>
-      </div>
-      <p class="sources-note">以上内容由 AI 自动聚合摘要，如有侵权请联系删除。</p>
+      <footer class="post-footer">
+        <div class="sources-box">
+          <h4>数据来源</h4>
+          <a href="https://news.aibase.com/zh" target="_blank" rel="noopener">AIBase</a>
+          <a href="https://jiqizhixin.com" target="_blank" rel="noopener">机器之心</a>
+          <a href="https://xinzhiyuan.ai" target="_blank" rel="noopener">新智元</a>
+          <a href="https://blog.google/technology/ai/" target="_blank" rel="noopener">Google AI Blog</a>
+          <a href="https://github.com/trending" target="_blank" rel="noopener">GitHub Trending</a>
+          <p style="margin-top:12px;font-size:0.8125rem;color:var(--text-tertiary);margin-bottom:0;">
+            以上内容由 AI 自动聚合摘要，如有侵权请联系删除。
+          </p>
+        </div>
+      </footer>
     </div>
   </main>
 </Layout>
-
-<style>
-  /* ─── Post body ─── */
-  .post-body {
-    font-size: 1em;
-    line-height: 1.85;
-    color: var(--text-primary);
-  }
-
-  .post-body :global(h2) {
-    font-size: 1.35em;
-    font-weight: 700;
-    margin-top: 48px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);
-    letter-spacing: -0.02em;
-    color: var(--text-primary);
-  }
-
-  .post-body :global(h3) {
-    font-size: 1.1em;
-    font-weight: 700;
-    margin-top: 28px;
-    margin-bottom: 12px;
-    color: var(--text-primary);
-  }
-
-  .post-body :global(ul) {
-    list-style: none;
-    padding: 0;
-    margin: 16px 0;
-  }
-
-  .post-body :global(ul li) {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    line-height: 1.7;
-  }
-
-  .post-body :global(ul li:last-child) {
-    border-bottom: none;
-  }
-
-  .post-body :global(ul li::before) {
-    content: '•';
-    color: var(--accent-color);
-    font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .post-body :global(a) {
-    color: var(--accent-color);
-    text-decoration: underline;
-    text-decoration-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
-    text-underline-offset: 3px;
-  }
-
-  .post-body :global(a:hover) {
-    text-decoration-color: var(--accent-color);
-    opacity: 1;
-  }
-
-  .post-body :global(blockquote) {
-    border-left: 3px solid var(--accent-color);
-    margin: 20px 0;
-    padding: 12px 20px;
-    background: color-mix(in srgb, var(--accent-color) 6%, transparent);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    color: var(--text-secondary);
-    font-size: 0.95em;
-  }
-
-  .post-body :global(strong) {
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-
-  /* ─── Sources footer ─── */
-  .sources-footer {
-    margin-top: 56px;
-    padding: 28px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-  }
-
-  .sources-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 700;
-    font-size: 0.85em;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 14px;
-  }
-
-  .sources-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 20px;
-    margin-bottom: 14px;
-  }
-
-  .sources-list a {
-    font-size: 0.9em;
-    color: var(--accent-color);
-    font-weight: 500;
-  }
-
-  .sources-note {
-    font-size: 0.82em;
-    color: var(--text-muted);
-    margin: 0;
-  }
-
-  @media (max-width: 600px) {
-    .post-body :global(h2) { font-size: 1.2em; }
-    .sources-footer { padding: 20px; }
-  }
-</style>
