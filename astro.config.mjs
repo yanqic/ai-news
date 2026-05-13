@@ -5,7 +5,7 @@ import mdx from '@astrojs/mdx';
 import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
-  site: 'https://ai-news.yanqidev.workers.dev',
+  site: 'https://ai-news-dbd.pages.dev',
   output: 'static',
   integrations: [
     tailwind(),
