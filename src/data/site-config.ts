@@ -4,7 +4,7 @@ export const SITE_TITLE = 'AI新闻简报';
 export const SITE_DESCRIPTION = '每日AI新闻简报，汇集AIBase、机器之心、新智元、Google AI Blog等来源的AI行业资讯。';
 export const SITE_AUTHOR = 'AI新闻自动聚合';
 
-export const SITE_AVATAR = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🤖</text></svg>';
+export const SITE_AVATAR = '/favicon.svg';
 export const SITE_SUBTITLE = '每日AI行业资讯';
 
 export const SITE_NAVIGATION = [
